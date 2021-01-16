@@ -8,11 +8,12 @@ public class DFA {
     int[] accepting;
     int[][] transition;
     char[] alphabet;
+    int initialState;
     int currentState;
 
 
     public boolean execute(String s){
-        int state = 0;
+        int state = initialState;
         for(int i = 0; i < s.length(); i++){
             try {
                 state = transition[state][s.charAt(i)];

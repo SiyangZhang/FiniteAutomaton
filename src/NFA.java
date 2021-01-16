@@ -6,6 +6,7 @@ public class NFA{
 
     int nstates;
     int[] accepting;
+    int initialState;
     Set<Integer>[][] transition;
     char[] alphabet;
     Set<Integer> currentState;
@@ -15,6 +16,7 @@ public class NFA{
         this.nstates = nstates;
         alphabet = new char[128];
         alphabets = new HashSet<>();
+        initialState = 0;
         transition = new Set[nstates][alphabet.length];
         for(Set<Integer>[] arr: transition){
             Arrays.fill(arr, new HashSet<>());
@@ -33,7 +35,7 @@ public class NFA{
 
     public boolean execute(String s){
         Set<Integer> set = new HashSet<>();
-        set.add(0);
+        set.add(initialState);
         for(int i = 0; i < s.length(); i++){
             char c = s.charAt(i);
             Set<Integer> result = new HashSet<>();
@@ -92,13 +94,10 @@ public class NFA{
 
         Set<Set<Integer>> buffer = new HashSet<>();
 
-        for(int i = 0; i < nfa.nstates; i++){
-            Set<Integer> singleton = new HashSet<>();
-            singleton.add(i);
-            map.put(singleton, map.size());
-            buffer.add(singleton);
-
-        }
+        Set<Integer> init = new HashSet<>();
+        init.add(nfa.initialState);
+        map.put(init, map.size());
+        buffer.add(init);
 
         Set<Set<Integer>> marker = new HashSet<>();
 
@@ -181,27 +180,18 @@ public class NFA{
 
     public static void main(String[] args){
         NFA nfa = new NFA(3);
-        int[] accpeting = {2};
-        nfa.setAccepting(accpeting);
+        nfa.setAccepting(new int[]{2});
+        nfa.setTransition(0, '0', 0);
+        nfa.setTransition(0, '0', 1);
+        nfa.setTransition(0, '1', 0);
+        nfa.setTransition(1, '1', 2);
 
-        nfa.setTransition(0, 'a', 0);
-        nfa.setTransition(0, 'a', 1);
-        nfa.setTransition(0, 'b', 0);
-        nfa.setTransition(0, 'c', 0);
-        nfa.setTransition(1, 'a', 1);
-        nfa.setTransition(1, 'b', 2);
-        nfa.setTransition(1, 'c', 0);
-        nfa.setTransition(2, 'a', 1);
-        nfa.setTransition(2, 'b', 0);
-        nfa.setTransition(2, 'c', 0);
-
-        DFA dfa = NFA.NFAtoDFA(nfa);
-        String[] words = {"asds", "asdab", "acab", "aba", "abcab"};
-        for(String word: words){
-            System.out.println(dfa.execute(word));
+        DFA dfa = NFAtoDFA(nfa);
+        System.out.println(dfa.nstates);
+        String[] ss = {"0101", "0110", "1101", "100110101", "01"};
+        for(String s: ss){
+            System.out.println(dfa.execute(s));
         }
-
-
     }
 
 }
